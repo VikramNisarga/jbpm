@@ -17,6 +17,7 @@
 package org.jbpm.process.instance.timer;
 
 import java.io.IOException;
+import java.io.Serializable;
 import java.util.Collection;
 import java.util.Date;
 import java.util.Iterator;
@@ -71,9 +72,9 @@ public class TimerManager {
     public TimerManager(InternalKnowledgeRuntime kruntime,
                         TimerService timerService) {
         this.kruntime = kruntime;
-        this.timerService = timerService;
+        this.timerService = GlobalTimerServiceSingleton.getTimerService();
     }
-
+;
     public void registerTimer(final TimerInstance timer,
                               ProcessInstance processInstance) {
         try {
@@ -305,9 +306,14 @@ public class TimerManager {
 
     public static class ProcessJob
         implements
-        Job {
+        Job,  Serializable {
 
-        public void execute(JobContext c) {
+        /**
+		 * 
+		 */
+		private static final long serialVersionUID = 4056900389700801457L;
+
+		public void execute(JobContext c) {
             
             ProcessJobContext ctx = (ProcessJobContext) c;
 
@@ -347,7 +353,7 @@ public class TimerManager {
         private static final long serialVersionUID = 476843895176221627L;
         
         private Long                     processInstanceId;
-        private InternalKnowledgeRuntime kruntime;
+        private transient InternalKnowledgeRuntime kruntime;
         private TimerInstance            timer;
         private Trigger                  trigger;
 
@@ -370,6 +376,9 @@ public class TimerManager {
         public InternalKnowledgeRuntime getKnowledgeRuntime() {
             return kruntime;
         }
+        public void setKnowledgeRuntime(InternalKnowledgeRuntime kruntime) {
+        	this.kruntime = kruntime;
+        }
         
         public Trigger getTrigger() {
             return trigger;
@@ -389,6 +398,37 @@ public class TimerManager {
 
     }
     
+
+    public static class StartProcessJobContext extends ProcessJobContext {
+
+        private static final long serialVersionUID = -5219141659893424294L;
+        private String processId;
+        private Map<String, Object> paramaeters;
+
+        public StartProcessJobContext(TimerInstance timer, Trigger trigger, String processId, Map<String, Object> params,
+                InternalKnowledgeRuntime kruntime) {
+            super(timer, trigger, null, kruntime);
+            this.processId = processId;
+            this.paramaeters = params;
+        }
+
+        public String getProcessId() {
+            return processId;
+        }
+
+        public void setProcessId(String processId) {
+            this.processId = processId;
+        }
+
+        public Map<String, Object> getParamaeters() {
+            return paramaeters;
+        }
+
+        public void setParamaeters(Map<String, Object> paramaeters) {
+            this.paramaeters = paramaeters;
+        }
+
+    }
     /**
      * Overdue aware trigger that introduces fixed delay to allow completion of session initialization
      *

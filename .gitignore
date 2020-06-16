@@ -1,8 +1,16 @@
-/target
+*/target/*
+
 /local
 
 # Eclipse, Netbeans and IntelliJ files
-/.*
+*/.*
+*/*/.*
+
+*.project
+*.settings
+*.classpath
+*.factorypath
+*.class
 !.gitignore
 /nbproject
 /*.ipr
@@ -22,5 +30,4 @@ bin/
 /lib-jdbc/
 bitronix-default-config.properties
 
-# modules that don't exist in this branch
-/jbpm-human-task-war/
+/.vscode/

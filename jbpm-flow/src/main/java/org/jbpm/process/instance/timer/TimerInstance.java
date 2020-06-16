@@ -16,6 +16,7 @@
 
 package org.jbpm.process.instance.timer;
 
+import java.io.Serializable;
 import java.util.Date;
 
 import org.drools.time.JobHandle;
@@ -24,7 +25,7 @@ import org.drools.time.JobHandle;
  * 
  * @author <a href="mailto:kris_verlaenen@hotmail.com">Kris Verlaenen</a>
  */
-public class TimerInstance {
+public class TimerInstance implements Serializable {
 
     private long id;
     private long timerId;
